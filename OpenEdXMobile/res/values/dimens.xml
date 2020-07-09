@@ -258,4 +258,12 @@
     <dimen name="edx_segmented_control_start_corner">5dp</dimen>
     <dimen name="edx_segmented_control_end_corner">0dp</dimen>
     <dimen name="social_button_top_margin">6dp</dimen>
+
+    <!-- Course Dates Block  -->
+    <dimen name="dot_width">9dp</dimen>
+    <dimen name="dot_height">9dp</dimen>
+    <dimen name="current_dot_width">14dp</dimen>
+    <dimen name="current_dot_height">14dp</dimen>
+    <dimen name="date_hairline">2px</dimen>
+
 </resources>

@@ -289,7 +289,7 @@ public class CourseTabsDashboardFragment extends TabsBaseFragment {
         if (environment.getConfig().isCourseDatesEnabled()) {
             items.add(new FragmentItemModel(CourseDatesPageFragment.class,
                     getResources().getString(R.string.course_dates_title), FontAwesomeIcons.fa_calendar,
-                    CourseDatesFragment.makeArguments(getContext(), environment, courseData),
+                    CourseDatesPageFragment.makeArguments(courseData.getCourse().getId()),
                     new FragmentItemModel.FragmentStateListener() {
                         @Override
                         public void onFragmentSelected() {

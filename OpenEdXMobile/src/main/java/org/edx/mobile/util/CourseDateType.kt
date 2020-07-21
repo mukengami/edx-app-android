@@ -5,14 +5,12 @@ package org.edx.mobile.util
  */
 enum class CourseDateType {
     TODAY,
-    COURSE_START_DATE,
+    BLANK,
     VERIFIED_ONLY,
     COMPLETED,
     PAST_DUE,
     DUE_NEXT,
-    NOT_YET_RELEASED,
-    COURSE_IN_PROGRESS,
-    COURSE_END;
+    NOT_YET_RELEASED;
 
     fun getTitle(): String {
         return when (this) {

@@ -5,9 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="dateType"
             type="org.edx.mobile.model.course.CourseDateBlock" />
+
+        <variable
+            name="listener"
+            type="org.edx.mobile.interfaces.OnDateBlockListener" />
+
+        <variable
+            name="list"
+            type="java.util.ArrayList&lt;org.edx.mobile.model.course.CourseDateBlock&gt;" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +45,7 @@
             app:layout_constraintEnd_toEndOf="@id/dot_today"
             app:layout_constraintStart_toStartOf="@+id/dot_today"
             app:layout_constraintTop_toTopOf="@id/dot_today"
-            binding:dotBackground="@{dateType.date_type}"
+            binding:dotBackground="@{dateType.getDateTypeTag()}"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -51,7 +60,7 @@
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            binding:isVisible="@{dateType.isToday}"
+            binding:isVisible="@{dateType.getToday()}"
             tools:ignore="ContentDescription"
             tools:visibility="visible" />
 
@@ -72,6 +81,8 @@
             android:orientation="vertical"
             android:paddingStart="@dimen/edx_margin"
             android:paddingBottom="@dimen/edx_double_margin"
+            binding:addView="@{list}"
+            binding:clickListener="@{listener}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/dot"
             app:layout_constraintTop_toTopOf="parent">
@@ -85,7 +96,7 @@
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mon, Aug 30, 2020"
+                    android:text="@{dateType.getDate()}"
                     android:textColor="@color/switch_text_color"
                     android:textSize="@dimen/edx_large"
                     android:textStyle="bold" />
@@ -103,29 +114,29 @@
                     android:paddingBottom="3dp"
                     android:textColor="@color/white"
                     android:textSize="@dimen/edx_small"
-                    binding:tagBackground="@{dateType.date_type}"
+                    binding:dateBackground="@{dateType.getDateTypeTag()}"
                     tools:visibility="visible" />
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Course Start"
-                android:textColor="@color/black"
-                android:textSize="@dimen/edx_base"
-                android:textStyle="bold"
-                binding:isEnable="@{dateType.learner_has_access}" />
+<!--            <TextView-->
+<!--                android:id="@+id/title"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@{dateType.title}"-->
+<!--                android:textColor="@color/switch_text_color"-->
+<!--                android:textSize="@dimen/edx_base"-->
+<!--                android:textStyle="bold"-->
+<!--                binding:isUserHasAccess="@{dateType.getDateTypeTag()}" />-->
 
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="You are still eligible to upgrade to a Verified Certificate! Pursue it to highlight the knowledge and skills you gain in this course. Upgrade to Verified Certificate for full access."
-                android:textColor="@color/switch_text_color"
-                android:textSize="@dimen/edx_small"
-                binding:isEnable="@{dateType.learner_has_access}" />
+<!--            <TextView-->
+<!--                android:id="@+id/description"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@{dateType.description}"-->
+<!--                android:textColor="@color/switch_text_color"-->
+<!--                android:textSize="@dimen/edx_small"-->
+<!--                binding:isUserHasAccess="@{dateType.getDateTypeTag}" />-->
 
         </LinearLayout>
 

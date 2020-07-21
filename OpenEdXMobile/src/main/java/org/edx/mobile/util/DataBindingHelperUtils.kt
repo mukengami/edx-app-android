@@ -1,23 +1,36 @@
 package org.edx.mobile.util
 
+import android.content.Context
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.BindingAdapter
 import com.joanzapata.iconify.IconDrawable
 import com.joanzapata.iconify.fonts.FontAwesomeIcons
+import kotlinx.android.synthetic.main.sub_item_course_date_block.view.*
 import org.edx.mobile.R
+import org.edx.mobile.interfaces.OnDateBlockListener
+import org.edx.mobile.model.course.CourseDateBlock
+import org.edx.mobile.view.adapters.PopularSubjectsAdapter
 
 class DataBindingHelperUtils {
 
     companion object {
         @JvmStatic
-        @BindingAdapter("binding:isEnable")
-        fun isViewEnable(textView: TextView, isEnable: Boolean) {
-            textView.isEnabled = isEnable
+        @BindingAdapter("binding:isUserHasAccess")
+        fun isViewAccessible(view: View, type: CourseDateType?) {
+            when (type) {
+                CourseDateType.VERIFIED_ONLY,
+                CourseDateType.NOT_YET_RELEASED ->
+                    view.isEnabled = false
+                else ->
+                    view.isEnabled = true
+            }
         }
 
         @JvmStatic
@@ -33,8 +46,25 @@ class DataBindingHelperUtils {
         }
 
         @JvmStatic
+        @BindingAdapter("binding:addView", "binding:clickListener", requireAll = true)
+        fun addView(linearLayout: LinearLayout, list: ArrayList<CourseDateBlock>, clickListener: OnDateBlockListener) {
+            val inflater: LayoutInflater = linearLayout.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            list.forEach { item ->
+                val childView = inflater.inflate(R.layout.sub_item_course_date_block, null)
+                childView.title.text = item.title
+                isViewAccessible(childView.title, item.getDateTypeTag())
+                childView.description.text = item.description
+                isViewAccessible(childView.description, item.getDateTypeTag())
+                linearLayout.addView(childView)
+                childView.setOnClickListener{
+                    clickListener.onClick(item.link)
+                }
+            }
+        }
+
+        @JvmStatic
         @BindingAdapter("binding:dotBackground")
-        fun setDotBackground(dotView: ImageView, type: CourseDateType) {
+        fun setDotBackground(dotView: ImageView, type: CourseDateType?) {
             dotView.bringToFront()
             when (type) {
                 CourseDateType.COMPLETED -> {
@@ -43,24 +73,20 @@ class DataBindingHelperUtils {
                 CourseDateType.PAST_DUE -> {
                     dotView.background = ContextCompat.getDrawable(dotView.context, R.drawable.black_border_gray_circle)
                 }
-                CourseDateType.COURSE_START_DATE,
+                CourseDateType.BLANK,
                 CourseDateType.DUE_NEXT,
                 CourseDateType.NOT_YET_RELEASED,
-                CourseDateType.COURSE_IN_PROGRESS,
-                CourseDateType.VERIFIED_ONLY,
-                CourseDateType.COURSE_END -> {
+                CourseDateType.VERIFIED_ONLY -> {
                     dotView.background = ContextCompat.getDrawable(dotView.context, R.drawable.black_circle)
-                }
-                else -> {
-                    dotView.visibility = View.INVISIBLE
                 }
             }
         }
 
         @JvmStatic
-        @BindingAdapter("binding:tagBackground")
-        fun setTagBackground(textView: TextView, type: CourseDateType) {
-            textView.text = type.getTitle()
+        @BindingAdapter("binding:dateBackground")
+        fun setDateBackground(textView: TextView, type: CourseDateType?) {
+            textView.text = type?.getTitle()
+            textView.visibility = View.VISIBLE
             when (type) {
                 CourseDateType.TODAY -> {
                     textView.setTextColor(Color.BLACK)

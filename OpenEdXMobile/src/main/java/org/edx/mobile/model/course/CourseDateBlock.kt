@@ -7,18 +7,17 @@ import org.edx.mobile.util.TextUtils
 
 data class CourseDateBlock(
         @SerializedName("complete") var complete: Boolean = false,
-        @SerializedName("date") private val date: String = "",
+        @SerializedName("date") val date: String = "",
         @SerializedName("date_type") var date_type: String? = "",
         @SerializedName("description") val description: String = "",
         @SerializedName("learner_has_access") var learner_has_access: Boolean = false,
         @SerializedName("link") val link: String = "",
         @SerializedName("link_text") val link_text: String = "",
         @SerializedName("title") val title: String = "",
-        var dateBlockTag: CourseDateType = CourseDateType.BLANK,
-        var isToday: Boolean = false
+        var dateBlockTag: CourseDateType = CourseDateType.BLANK
 ) {
-    fun getToday(): Boolean {
-        return DateUtil.isDateToday(date)
+    fun isToday(): Boolean {
+        return DateUtil.isDateToday(date) || date_type.equals(DateTypes.TODAY_DATE)
     }
 
     fun getDateTypeTag(): CourseDateType {
@@ -61,15 +60,24 @@ data class CourseDateBlock(
                 DateTypes.VERIFICATION_DEADLINE_DATE ->
                     dateBlockTag = CourseDateType.BLANK
             }
-            if (DateUtil.isDateToday(date)) {
-                dateBlockTag = CourseDateType.TODAY
-            }
         }
         return dateBlockTag
     }
 
-    fun getDate(): String {
+    fun getFormattedDate(): String {
         return DateUtil.formatCourseDate(date)
+    }
+
+    fun getSimpleDateTime(): String {
+        return DateUtil.convertToSimpleDate(date)
+    }
+
+    fun isDatePassed():Boolean{
+        return DateUtil.isDatePast(date)
+    }
+
+    fun isDateDue():Boolean{
+        return DateUtil.isDateDue(date)
     }
 
     object DateTypes {

@@ -49,22 +49,29 @@ class DataBindingHelperUtils {
         @BindingAdapter("binding:addView", "binding:clickListener", requireAll = true)
         fun addView(linearLayout: LinearLayout, list: ArrayList<CourseDateBlock>, clickListener: OnDateBlockListener) {
             val inflater: LayoutInflater = linearLayout.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            list.forEach { item ->
-                val childView = inflater.inflate(R.layout.sub_item_course_date_block, null)
-                childView.title.text = item.title
-                isViewAccessible(childView.title, item.getDateTypeTag())
-                childView.description.text = item.description
-                isViewAccessible(childView.description, item.getDateTypeTag())
-                linearLayout.addView(childView)
-                childView.setOnClickListener{
-                    clickListener.onClick(item.link)
+            if (linearLayout.childCount < 2) {
+                list.forEach { item ->
+                    val childView = inflater.inflate(R.layout.sub_item_course_date_block, null)
+                    childView.invalidate()
+                    childView.title.text = item.title
+                    isViewAccessible(childView.title, item.getDateTypeTag())
+
+                    childView.description.text = item.description
+                    isViewAccessible(childView.description, item.getDateTypeTag())
+
+                    childView.setOnClickListener {
+                        if (childView.title.isEnabled) {
+                            clickListener.onClick(item.link)
+                        }
+                    }
+                    linearLayout.addView(childView)
                 }
             }
         }
 
         @JvmStatic
-        @BindingAdapter("binding:dotBackground")
-        fun setDotBackground(dotView: ImageView, type: CourseDateType?) {
+        @BindingAdapter("binding:dotBackground", "binding:isDatePast", requireAll = true)
+        fun setDotBackground(dotView: ImageView, type: CourseDateType?, isDatePast: Boolean) {
             dotView.bringToFront()
             when (type) {
                 CourseDateType.COMPLETED -> {
@@ -77,7 +84,11 @@ class DataBindingHelperUtils {
                 CourseDateType.DUE_NEXT,
                 CourseDateType.NOT_YET_RELEASED,
                 CourseDateType.VERIFIED_ONLY -> {
-                    dotView.background = ContextCompat.getDrawable(dotView.context, R.drawable.black_circle)
+                    if (isDatePast) {
+                        dotView.background = ContextCompat.getDrawable(dotView.context, R.drawable.black_border_white_circle)
+                    } else {
+                        dotView.background = ContextCompat.getDrawable(dotView.context, R.drawable.black_circle)
+                    }
                 }
             }
         }

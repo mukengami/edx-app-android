@@ -85,15 +85,18 @@ public class DateUtil {
     }
 
     public static boolean isDatePast(String date) {
-        Date currentTimeDate = convertToDate(convertToSimpleDateTime(getCurrentTimeStamp()));
-        Date tempDate = convertToDate(convertToSimpleDateTime(date));
-        return currentTimeDate.compareTo(tempDate) < 0;
+        Date currentDate = convertToDate(getCurrentTimeStamp());
+        Date pastDate = convertToDate(date);
+        if(currentDate!=null && pastDate !=null) {
+            return pastDate.compareTo(currentDate) < 0;
+        }
+        return false;
     }
 
     public static boolean isDateDue(String date) {
-        Date currentTimeDate = convertToDate(convertToSimpleDateTime(getCurrentTimeStamp()));
-        Date tempDate = convertToDate(convertToSimpleDateTime(date));
-        return currentTimeDate.compareTo(tempDate) > 0;
+        Date currentDate = convertToDate(getCurrentTimeStamp());
+        Date dueDate = convertToDate(date);
+        return dueDate.compareTo(currentDate) > 0;
     }
 
     /**

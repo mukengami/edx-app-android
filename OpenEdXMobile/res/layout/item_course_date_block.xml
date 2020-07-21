@@ -46,6 +46,7 @@
             app:layout_constraintStart_toStartOf="@+id/dot_today"
             app:layout_constraintTop_toTopOf="@id/dot_today"
             binding:dotBackground="@{dateType.getDateTypeTag()}"
+            binding:isDatePast="@{dateType.isDatePassed()}"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -60,7 +61,7 @@
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            binding:isVisible="@{dateType.getToday()}"
+            binding:isVisible="@{dateType.isToday()}"
             tools:ignore="ContentDescription"
             tools:visibility="visible" />
 
@@ -81,11 +82,11 @@
             android:orientation="vertical"
             android:paddingStart="@dimen/edx_margin"
             android:paddingBottom="@dimen/edx_double_margin"
-            binding:addView="@{list}"
-            binding:clickListener="@{listener}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/dot"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            binding:addView="@{list}"
+            binding:clickListener="@{listener}">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,7 +97,7 @@
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{dateType.getDate()}"
+                    android:text="@{dateType.getFormattedDate()}"
                     android:textColor="@color/switch_text_color"
                     android:textSize="@dimen/edx_large"
                     android:textStyle="bold" />
@@ -118,26 +119,6 @@
                     tools:visibility="visible" />
 
             </LinearLayout>
-
-<!--            <TextView-->
-<!--                android:id="@+id/title"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@{dateType.title}"-->
-<!--                android:textColor="@color/switch_text_color"-->
-<!--                android:textSize="@dimen/edx_base"-->
-<!--                android:textStyle="bold"-->
-<!--                binding:isUserHasAccess="@{dateType.getDateTypeTag()}" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/description"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@{dateType.description}"-->
-<!--                android:textColor="@color/switch_text_color"-->
-<!--                android:textSize="@dimen/edx_small"-->
-<!--                binding:isUserHasAccess="@{dateType.getDateTypeTag}" />-->
-
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,31 +28,31 @@
 
 
         <View
-            android:id="@+id/above_line_dot"
+            android:id="@+id/line_above_dot"
             android:layout_width="@dimen/date_hairline"
             android:layout_height="0dp"
             android:background="@drawable/black_line_vertical"
-            app:layout_constraintBottom_toTopOf="@+id/dot"
-            app:layout_constraintEnd_toEndOf="@+id/dot_today"
-            app:layout_constraintStart_toStartOf="@+id/dot_today"
+            app:layout_constraintBottom_toTopOf="@+id/bullet"
+            app:layout_constraintEnd_toEndOf="@+id/bullet_today"
+            app:layout_constraintStart_toStartOf="@+id/bullet_today"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/dot"
-            android:layout_width="@dimen/dot_width"
-            android:layout_height="@dimen/dot_height"
-            app:layout_constraintBottom_toBottomOf="@id/dot_today"
-            app:layout_constraintEnd_toEndOf="@id/dot_today"
-            app:layout_constraintStart_toStartOf="@+id/dot_today"
-            app:layout_constraintTop_toTopOf="@id/dot_today"
-            binding:dotBackground="@{dateType.getDateTypeTag()}"
+            android:id="@+id/bullet"
+            android:layout_width="@dimen/bullet_width"
+            android:layout_height="@dimen/bullet_height"
+            app:layout_constraintBottom_toBottomOf="@id/bullet_today"
+            app:layout_constraintEnd_toEndOf="@id/bullet_today"
+            app:layout_constraintStart_toStartOf="@+id/bullet_today"
+            app:layout_constraintTop_toTopOf="@id/bullet_today"
+            binding:bulletBackground="@{dateType.getDateTypeTag()}"
             binding:isDatePast="@{dateType.isDatePassed()}"
             tools:ignore="ContentDescription" />
 
         <ImageView
-            android:id="@+id/dot_today"
-            android:layout_width="@dimen/current_dot_width"
-            android:layout_height="@dimen/current_dot_height"
+            android:id="@+id/bullet_today"
+            android:layout_width="@dimen/today_bullet_width"
+            android:layout_height="@dimen/today_bullet_height"
             android:layout_marginStart="@dimen/edx_half_margin"
             android:layout_marginTop="@dimen/widget_margin_half"
             android:layout_marginEnd="@dimen/edx_half_margin"
@@ -66,14 +66,14 @@
             tools:visibility="visible" />
 
         <View
-            android:id="@+id/below_line_dot"
+            android:id="@+id/line_below_dot"
             android:layout_width="@dimen/date_hairline"
             android:layout_height="0dp"
             android:background="@drawable/black_line_vertical"
             app:layout_constraintBottom_toBottomOf="@+id/date_info_container"
-            app:layout_constraintEnd_toEndOf="@+id/dot_today"
-            app:layout_constraintStart_toStartOf="@+id/dot_today"
-            app:layout_constraintTop_toBottomOf="@+id/dot" />
+            app:layout_constraintEnd_toEndOf="@+id/bullet_today"
+            app:layout_constraintStart_toStartOf="@+id/bullet_today"
+            app:layout_constraintTop_toBottomOf="@+id/bullet" />
 
         <LinearLayout
             android:id="@+id/date_info_container"
@@ -83,7 +83,7 @@
             android:paddingStart="@dimen/edx_margin"
             android:paddingBottom="@dimen/edx_double_margin"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dot"
+            app:layout_constraintStart_toEndOf="@+id/bullet"
             app:layout_constraintTop_toTopOf="parent"
             binding:addView="@{list}"
             binding:clickListener="@{listener}">
@@ -115,7 +115,8 @@
                     android:paddingBottom="3dp"
                     android:textColor="@color/white"
                     android:textSize="@dimen/edx_small"
-                    binding:dateBackground="@{dateType.getDateTypeTag()}"
+                    binding:tagBackground="@{dateType.getDateTypeTag()}"
+                    binding:isToday="@{dateType.today}"
                     tools:visibility="visible" />
 
             </LinearLayout>

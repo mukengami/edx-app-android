@@ -3,7 +3,6 @@ package org.edx.mobile.model.course
 import com.google.gson.annotations.SerializedName
 import org.edx.mobile.util.CourseDateType
 import org.edx.mobile.util.DateUtil
-import org.edx.mobile.util.TextUtils
 
 data class CourseDateBlock(
         @SerializedName("complete") var complete: Boolean = false,
@@ -13,14 +12,14 @@ data class CourseDateBlock(
         @SerializedName("learner_has_access") var learner_has_access: Boolean = false,
         @SerializedName("link") val link: String = "",
         @SerializedName("link_text") val link_text: String = "",
-        @SerializedName("title") val title: String = "",
-        var dateBlockTag: CourseDateType = CourseDateType.BLANK
+        @SerializedName("title") val title: String = ""
 ) {
     fun isToday(): Boolean {
         return DateUtil.isDateToday(date) || date_type.equals(DateTypes.TODAY_DATE)
     }
 
     fun getDateTypeTag(): CourseDateType {
+        var dateBlockTag: CourseDateType = CourseDateType.BLANK
         date_type?.let {
             when (it) {
                 DateTypes.TODAY_DATE ->
@@ -64,21 +63,17 @@ data class CourseDateBlock(
         return dateBlockTag
     }
 
-    fun getFormattedDate(): String {
-        return DateUtil.formatCourseDate(date)
-    }
+    fun getFormattedDate(): String = DateUtil.formatCourseDate(date)
 
-    fun getSimpleDateTime(): String {
-        return DateUtil.convertToSimpleDate(date)
-    }
+    fun getSimpleDateTime(): String = DateUtil.convertToSimpleDate(date)
 
-    fun isDatePassed():Boolean{
-        return DateUtil.isDatePast(date)
-    }
+    fun isDatePassed(): Boolean = DateUtil.isDatePast(date)
 
-    fun isDateDue():Boolean{
-        return DateUtil.isDateDue(date)
-    }
+    fun isAssignment(): Boolean = date_type.equals(DateTypes.ASSIGNMENT_DUE_DATE)
+
+    fun isLearnerAssignment(): Boolean = learner_has_access && isAssignment()
+
+    fun showLink(): Boolean = link.isNotBlank() && isLearnerAssignment()
 
     object DateTypes {
         const val TODAY_DATE = "todays-date"

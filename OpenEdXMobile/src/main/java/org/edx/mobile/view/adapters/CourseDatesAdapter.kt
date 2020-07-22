@@ -38,39 +38,40 @@ class CourseDatesAdapter(private val data: HashMap<String, ArrayList<CourseDateB
     }
 
     override fun onBindViewHolder(holder: CourseDateHolder, position: Int) {
-        when (position) {
-            0 -> {
-                holder.binding.aboveLineDot.visibility = View.INVISIBLE
-                holder.binding.belowLineDot.visibility = View.VISIBLE
-            }
-            (itemCount - 1) -> {
-                holder.binding.aboveLineDot.visibility = View.VISIBLE
-                holder.binding.belowLineDot.visibility = View.INVISIBLE
-            }
-            else -> {
-                holder.binding.aboveLineDot.visibility = View.VISIBLE
-                holder.binding.belowLineDot.visibility = View.VISIBLE
-            }
-        }
         if (data.isNotEmpty()) {
+            when (position) {
+                0 -> {
+                    holder.binding.lineAboveDot.visibility = View.INVISIBLE
+                    holder.binding.lineBelowDot.visibility = View.VISIBLE
+                }
+                (itemCount - 1) -> {
+                    holder.binding.lineAboveDot.visibility = View.VISIBLE
+                    holder.binding.lineBelowDot.visibility = View.INVISIBLE
+                }
+                else -> {
+                    holder.binding.lineAboveDot.visibility = View.VISIBLE
+                    holder.binding.lineBelowDot.visibility = View.VISIBLE
+                }
+            }
+            if(data.size == 1){
+                holder.binding.lineAboveDot.visibility = View.INVISIBLE
+                holder.binding.lineBelowDot.visibility = View.INVISIBLE
+            }
             val key = keys[position]
             if (key.equals(CourseDatesPageFragment.getTodayDateBlock().getSimpleDateTime(), ignoreCase = true) && data[key].isNullOrEmpty()) {
                 holder.bind(CourseDatesPageFragment.getTodayDateBlock(), arrayListOf())
             } else {
-                holder.bind(data[key]?.first(), arrayListOf())
                 holder.bind(data[key]?.first(), data[key])
             }
-            holder.binding.root.setTag(getItemViewType(position))
         }
     }
 
     class CourseDateHolder(var binding: ItemCourseDateBlockBinding, private val onLinkClick: OnDateBlockListener) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CourseDateBlock?, list: ArrayList<CourseDateBlock>?) {
-            binding.itemContainer.setBackgroundColor(Color.WHITE)
             binding.date.setTypeface(null, Typeface.BOLD)
             binding.dateTag.setTypeface(null, Typeface.BOLD_ITALIC)
             binding.setVariable(BR.dateType, item)
-            binding.list = if (list?.isNotEmpty() == true) list else arrayListOf()
+            binding.list = if (list.isNullOrEmpty().not()) list else arrayListOf()
             binding.listener = onLinkClick
         }
     }

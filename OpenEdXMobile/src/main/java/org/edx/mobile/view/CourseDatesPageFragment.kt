@@ -12,6 +12,7 @@ import okhttp3.ResponseBody
 import org.edx.mobile.R
 import org.edx.mobile.course.CourseAPI
 import org.edx.mobile.databinding.FragmentCourseDatesPageBinding
+import org.edx.mobile.http.HttpStatus
 import org.edx.mobile.http.HttpStatusException
 import org.edx.mobile.http.notifications.FullScreenErrorNotification
 import org.edx.mobile.interfaces.OnDateBlockListener
@@ -113,7 +114,6 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
     private fun populateCourseDates(list: List<CourseDateBlock>) {
         data = HashMap<String, ArrayList<CourseDateBlock>>()
         sortKeys = ArrayList()
-        val isContainToday = isContainToday(list)
         if (list.isNotEmpty()) {
             list.forEach { item ->
                 if (data.containsKey(item.getSimpleDateTime())) {
@@ -123,31 +123,37 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
                     sortKeys.add(item.getSimpleDateTime())
                 }
             }
-        }
-        if (isContainToday.not() && DateUtil.isDatePast(sortKeys.first()) && DateUtil.isDateDue(sortKeys.last())) {
-            var ind = 0
-            sortKeys.forEachIndexed { index, str ->
-                if (index < sortKeys.lastIndex && DateUtil.isDatePast(str) && DateUtil.isDateDue(sortKeys[index + 1])) {
-                    ind = index + 1
+            if (isContainToday(list).not() && DateUtil.isDatePast(sortKeys.first()) && DateUtil.isDateDue(sortKeys.last())) {
+                var ind = 0
+                sortKeys.forEachIndexed { index, str ->
+                    if (index < sortKeys.lastIndex && DateUtil.isDatePast(str) && DateUtil.isDateDue(sortKeys[index + 1])) {
+                        ind = index + 1
+                    }
                 }
-            }
-            sortKeys.add(ind, getTodayDateBlock().getSimpleDateTime())
+                sortKeys.add(ind, getTodayDateBlock().getSimpleDateTime())
 
-        }
-        mBinding.dateList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = CourseDatesAdapter(data, sortKeys, onLinkClick)
+            }
+            mBinding.dateList.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = CourseDatesAdapter(data, sortKeys, onLinkClick)
+            }
+        } else {
+            context?.let {
+                errorNotification.showError(it,
+                        HttpStatusException(Response.error<Any>(HttpStatus.NO_CONTENT,
+                                ResponseBody.create(MediaType.parse("text/plain"), "Currently no date available for this course"))),
+                        -1, null)
+            }
         }
 
     }
 
     private fun isContainToday(list: List<CourseDateBlock>): Boolean {
-        var isContainToday = false
         list.forEach {
             if (it.isToday()) {
-                isContainToday = true
+                return true
             }
         }
-        return isContainToday
+        return false
     }
 }

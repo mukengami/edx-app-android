@@ -80,6 +80,10 @@ public class DateUtil {
         }
     }
 
+    /**
+     * This function match the provide date with current date
+     * @return true if the provided date is today
+     */
     public static boolean isDateToday(String date) {
         return convertToSimpleDate(date).equals(convertToSimpleDate(getCurrentTimeStamp()));
     }
@@ -105,23 +109,6 @@ public class DateUtil {
     public static String convertToSimpleDate(String date) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date startDate = DateUtil.convertToDate(date);
-
-            String formattedDate = dateFormat.format(startDate);
-            return formattedDate;
-        } catch (Exception e) {
-            //This will be removed when the PR for log changes is merged with master
-            logger.error(e);
-            return "";
-        }
-    }
-
-    /**
-     * This function returns Simple date in the dd MMM yyyy HH:mm:ss format
-     */
-    public static String convertToSimpleDateTime(String date) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
             Date startDate = DateUtil.convertToDate(date);
 
             String formattedDate = dateFormat.format(startDate);

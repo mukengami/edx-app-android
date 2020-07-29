@@ -82,6 +82,7 @@ public class DateUtil {
 
     /**
      * This function match the provide date with current date
+     *
      * @return true if the provided date is today
      */
     public static boolean isDateToday(String date) {
@@ -91,7 +92,7 @@ public class DateUtil {
     public static boolean isDatePast(String date) {
         Date currentDate = convertToDate(getCurrentTimeStamp());
         Date pastDate = convertToDate(date);
-        if(currentDate!=null && pastDate !=null) {
+        if (currentDate != null && pastDate != null) {
             return pastDate.compareTo(currentDate) < 0;
         }
         return false;
@@ -100,7 +101,10 @@ public class DateUtil {
     public static boolean isDateDue(String date) {
         Date currentDate = convertToDate(getCurrentTimeStamp());
         Date dueDate = convertToDate(date);
-        return dueDate.compareTo(currentDate) > 0;
+        if (currentDate != null && dueDate != null) {
+            return dueDate.compareTo(currentDate) > 0;
+        }
+        return false;
     }
 
     /**

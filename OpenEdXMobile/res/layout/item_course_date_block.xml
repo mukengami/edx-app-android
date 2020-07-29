@@ -29,7 +29,7 @@
 
         <View
             android:id="@+id/line_above_dot"
-            android:layout_width="@dimen/date_hairline"
+            android:layout_width="@dimen/width_hairline"
             android:layout_height="0dp"
             android:background="@drawable/black_line_vertical"
             app:layout_constraintBottom_toTopOf="@+id/bullet"
@@ -45,7 +45,7 @@
             app:layout_constraintEnd_toEndOf="@id/bullet_today"
             app:layout_constraintStart_toStartOf="@+id/bullet_today"
             app:layout_constraintTop_toTopOf="@id/bullet_today"
-            binding:bulletBackground="@{dateType.getDateTypeTag()}"
+            binding:bulletBackground="@{dateType.dateBlockTag}"
             binding:isDatePast="@{dateType.isDatePassed()}"
             tools:ignore="ContentDescription" />
 
@@ -67,7 +67,7 @@
 
         <View
             android:id="@+id/line_below_dot"
-            android:layout_width="@dimen/date_hairline"
+            android:layout_width="@dimen/width_hairline"
             android:layout_height="0dp"
             android:background="@drawable/black_line_vertical"
             app:layout_constraintBottom_toBottomOf="@+id/date_info_container"
@@ -115,8 +115,8 @@
                     android:paddingBottom="3dp"
                     android:textColor="@color/white"
                     android:textSize="@dimen/edx_small"
-                    binding:tagBackground="@{dateType.getDateTypeTag()}"
                     binding:isToday="@{dateType.today}"
+                    binding:tagBackground="@{dateType.dateBlockTag}"
                     tools:visibility="visible" />
 
             </LinearLayout>

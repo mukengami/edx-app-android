@@ -12,56 +12,11 @@ data class CourseDateBlock(
         @SerializedName("learner_has_access") var learner_has_access: Boolean = false,
         @SerializedName("link") val link: String = "",
         @SerializedName("link_text") val link_text: String = "",
-        @SerializedName("title") val title: String = ""
-) {
-    fun isToday(): Boolean {
-        return DateUtil.isDateToday(date) || date_type.equals(DateTypes.TODAY_DATE)
-    }
-
-    fun getDateTypeTag(): CourseDateType {
+        @SerializedName("title") val title: String = "",
         var dateBlockTag: CourseDateType = CourseDateType.BLANK
-        date_type?.let {
-            when (it) {
-                DateTypes.TODAY_DATE ->
-                    dateBlockTag = CourseDateType.TODAY
-                DateTypes.COURSE_START_DATE,
-                DateTypes.COURSE_END_DATE ->
-                    dateBlockTag = CourseDateType.BLANK
-                DateTypes.ASSIGNMENT_DUE_DATE -> {
-                    when {
-                        complete -> {
-                            dateBlockTag = CourseDateType.COMPLETED
-                        }
-                        learner_has_access -> {
-                            when {
-                                DateUtil.isDatePast(date) -> {
-                                    dateBlockTag = CourseDateType.PAST_DUE
-                                }
-                                DateUtil.isDateDue(date) -> {
-                                    dateBlockTag = CourseDateType.DUE_NEXT
-                                }
-                                link.isEmpty() -> {
-                                    dateBlockTag = CourseDateType.NOT_YET_RELEASED
-                                }
-                                else -> {
-                                    dateBlockTag = CourseDateType.BLANK
-                                }
-                            }
-                        }
-                        else -> {
-                            dateBlockTag = CourseDateType.VERIFIED_ONLY
-                        }
-                    }
-                }
-                DateTypes.COURSE_EXPIRED_DATE,
-                DateTypes.CERTIFICATE_AVAILABLE_DATE,
-                DateTypes.VERIFIED_UPGRADE_DEADLINE,
-                DateTypes.VERIFICATION_DEADLINE_DATE ->
-                    dateBlockTag = CourseDateType.BLANK
-            }
-        }
-        return dateBlockTag
-    }
+
+) {
+    fun isToday(): Boolean = (DateUtil.isDateToday(date) || date_type.equals(DateTypes.TODAY_DATE))
 
     fun getFormattedDate(): String = DateUtil.formatCourseDate(date)
 

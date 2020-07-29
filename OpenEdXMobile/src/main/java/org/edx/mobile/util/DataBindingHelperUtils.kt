@@ -60,10 +60,10 @@ class DataBindingHelperUtils {
                     val childView = inflater.inflate(R.layout.sub_item_course_date_block, null)
 
                     setText(childView.title, item.title)
-                    isViewAccessible(childView.title, item.getDateTypeTag())
+                    isViewAccessible(childView.title, item.dateBlockTag)
 
                     setText(childView.description, item.description)
-                    isViewAccessible(childView.description, item.getDateTypeTag())
+                    isViewAccessible(childView.description, item.dateBlockTag)
 
                     if (item.showLink()) {
                         childView.title.paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -127,11 +127,11 @@ class DataBindingHelperUtils {
                     }
                     CourseDateType.PAST_DUE -> {
                         textView.setTextColor(Color.DKGRAY)
-                        textView.background = ContextCompat.getDrawable(textView.context, R.drawable.light_grey_roundedbg)
+                        textView.background = ContextCompat.getDrawable(textView.context, R.drawable.light_gray_roundedbg)
                     }
                     CourseDateType.DUE_NEXT -> {
                         textView.setTextColor(Color.WHITE)
-                        textView.background = ContextCompat.getDrawable(textView.context, R.drawable.dark_grey_roundedbg)
+                        textView.background = ContextCompat.getDrawable(textView.context, R.drawable.dark_gray_roundedbg)
                     }
                     CourseDateType.NOT_YET_RELEASED -> {
                         textView.setTextColor(Color.GRAY)

@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <stroke
-        android:width="@dimen/date_hairline"
-        android:color="#2d323e" />
-    <solid android:color="#f5f5f5" />
+        android:width="@dimen/width_hairline"
+        android:color="@color/black" />
+    <solid android:color="@color/bullet_transparent_white" />
 </shape>

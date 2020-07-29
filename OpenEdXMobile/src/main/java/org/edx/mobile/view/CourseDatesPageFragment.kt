@@ -40,7 +40,6 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
     private var sortKeys: ArrayList<String> = ArrayList()
     private var onLinkClick: OnDateBlockListener = object : OnDateBlockListener {
         override fun onClick(link: String) {
-//            Toast.makeText(context, link, Toast.LENGTH_SHORT).show()
             BrowserUtil.open(activity, link)
         }
     }
@@ -133,6 +132,7 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
                 sortKeys.add(ind, getTodayDateBlock().getSimpleDateTime())
 
             }
+            setDateBlockTag()
             mBinding.dateList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = CourseDatesAdapter(data, sortKeys, onLinkClick)
@@ -155,5 +155,66 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
             }
         }
         return false
+    }
+
+    private fun setDateBlockTag() {
+        var dueNextCount = 0
+        sortKeys.forEach { key ->
+            data[key]?.forEach { item ->
+                var dateBlockTag: CourseDateType = getDateTypeTag(item)
+                if (dateBlockTag.equals(CourseDateType.DUE_NEXT)) {
+                    if (dueNextCount == 0)
+                        dueNextCount += 1
+                    else
+                        dateBlockTag = CourseDateType.BLANK
+                }
+                item.dateBlockTag = dateBlockTag
+            }
+        }
+    }
+
+    private fun getDateTypeTag(item: CourseDateBlock): CourseDateType {
+        var dateBlockTag: CourseDateType = CourseDateType.BLANK
+        item.date_type?.let {
+            when (it) {
+                CourseDateBlock.DateTypes.TODAY_DATE ->
+                    dateBlockTag = CourseDateType.TODAY
+                CourseDateBlock.DateTypes.COURSE_START_DATE,
+                CourseDateBlock.DateTypes.COURSE_END_DATE ->
+                    dateBlockTag = CourseDateType.BLANK
+                CourseDateBlock.DateTypes.ASSIGNMENT_DUE_DATE -> {
+                    when {
+                        item.complete -> {
+                            dateBlockTag = CourseDateType.COMPLETED
+                        }
+                        item.learner_has_access -> {
+                            dateBlockTag = when {
+                                item.link.isEmpty() -> {
+                                    CourseDateType.NOT_YET_RELEASED
+                                }
+                                DateUtil.isDateDue(item.date) -> {
+                                    CourseDateType.DUE_NEXT
+                                }
+                                DateUtil.isDatePast(item.date) -> {
+                                    CourseDateType.PAST_DUE
+                                }
+                                else -> {
+                                    CourseDateType.BLANK
+                                }
+                            }
+                        }
+                        else -> {
+                            dateBlockTag = CourseDateType.VERIFIED_ONLY
+                        }
+                    }
+                }
+                CourseDateBlock.DateTypes.COURSE_EXPIRED_DATE,
+                CourseDateBlock.DateTypes.CERTIFICATE_AVAILABLE_DATE,
+                CourseDateBlock.DateTypes.VERIFIED_UPGRADE_DEADLINE,
+                CourseDateBlock.DateTypes.VERIFICATION_DEADLINE_DATE ->
+                    dateBlockTag = CourseDateType.BLANK
+            }
+        }
+        return dateBlockTag
     }
 }

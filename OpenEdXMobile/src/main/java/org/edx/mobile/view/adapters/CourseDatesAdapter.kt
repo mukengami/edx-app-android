@@ -53,7 +53,7 @@ class CourseDatesAdapter(private val data: HashMap<String, ArrayList<CourseDateB
                     holder.binding.lineBelowDot.visibility = View.VISIBLE
                 }
             }
-            if(data.size == 1){
+            if (data.size == 1) {
                 holder.binding.lineAboveDot.visibility = View.INVISIBLE
                 holder.binding.lineBelowDot.visibility = View.INVISIBLE
             }

@@ -10,6 +10,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.joanzapata.iconify.Icon;
@@ -87,6 +88,10 @@ public class IconProgressBar extends ProgressBar {
         if (drawable instanceof IconDrawable) {
             ((IconDrawable) drawable).color(colorStateList);
         }
+    }
+
+    public void showProgress(boolean isShow) {
+        this.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
     public void setIndeterminateIconColorResource(@ColorRes int colorResId) {

@@ -28,7 +28,6 @@ import org.edx.mobile.model.api.VideoResponseModel;
 import org.edx.mobile.model.course.BlockModel;
 import org.edx.mobile.model.course.BlockType;
 import org.edx.mobile.model.course.CourseComponent;
-import org.edx.mobile.model.course.CourseDateBlock;
 import org.edx.mobile.model.course.CourseDates;
 import org.edx.mobile.model.course.CourseStructureV1Model;
 import org.edx.mobile.model.course.DiscussionBlockModel;

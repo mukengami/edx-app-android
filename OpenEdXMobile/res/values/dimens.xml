@@ -265,5 +265,7 @@
     <dimen name="today_bullet_width">14dp</dimen>
     <dimen name="today_bullet_height">14dp</dimen>
     <dimen name="width_hairline">2px</dimen>
+    <dimen name="date_block_half_margin">8dp</dimen>
+    <dimen name="date_block_half_x_margin">10dp</dimen>
 
 </resources>

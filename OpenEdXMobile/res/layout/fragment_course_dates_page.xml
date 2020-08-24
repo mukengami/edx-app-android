@@ -13,12 +13,12 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/date_list"
+                android:id="@+id/rv_dates"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:clipToPadding="false"
-                android:padding="@dimen/edx_margin" />
+                android:padding="@dimen/date_block_half_x_margin" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

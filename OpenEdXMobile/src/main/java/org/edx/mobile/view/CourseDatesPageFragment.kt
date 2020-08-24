@@ -32,10 +32,10 @@ import javax.inject.Inject
 class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
     @Inject
-    var api: CourseAPI? = null
+    private lateinit var api: CourseAPI
     private lateinit var errorNotification: FullScreenErrorNotification
 
-    private lateinit var mBinding: FragmentCourseDatesPageBinding
+    private lateinit var binding: FragmentCourseDatesPageBinding
     private var data: HashMap<String, ArrayList<CourseDateBlock>> = HashMap()
     private var sortKeys: ArrayList<String> = ArrayList()
     private var onLinkClick: OnDateBlockListener = object : OnDateBlockListener {
@@ -46,7 +46,7 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
     companion object {
         @JvmStatic
-        fun makeArguments(courseId: String?): Bundle? {
+        fun makeArguments(courseId: String): Bundle {
             val courseBundle = Bundle()
             courseBundle.putString(Router.EXTRA_COURSE_ID, courseId)
             return courseBundle
@@ -57,32 +57,33 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
     }
 
     override fun isShowingFullScreenError(): Boolean {
-        return false
+        return errorNotification.isShowing
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_course_dates_page, container, false)
-        return mBinding.root
+                              savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_course_dates_page, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        errorNotification = FullScreenErrorNotification(mBinding.swipeContainer)
+        errorNotification = FullScreenErrorNotification(binding.swipeContainer)
 
-        mBinding.swipeContainer.setOnRefreshListener(OnRefreshListener {
+        binding.swipeContainer.setOnRefreshListener {
             // Hide the progress bar as swipe layout has its own progress indicator
-            mBinding.loadingIndicator.loadingIndicator.visibility = View.GONE
+            binding.loadingIndicator.loadingIndicator.visibility = View.GONE
             errorNotification.hideError()
             getCourseDates()
-        })
-        UiUtil.setSwipeRefreshLayoutColors(mBinding.swipeContainer)
+        }
+        UiUtil.setSwipeRefreshLayoutColors(binding.swipeContainer)
         getCourseDates()
     }
 
     private fun getCourseDates() {
-        mBinding.loadingIndicator.loadingIndicator.visibility = View.VISIBLE
-        var courseDates: Call<CourseDates> = api?.getCourseDates(arguments?.getString(Router.EXTRA_COURSE_ID)!!)!!
+        binding.loadingIndicator.loadingIndicator.showProgress(true)
+        var courseDates: Call<CourseDates> = api.getCourseDates(arguments?.getString(Router.EXTRA_COURSE_ID)
+                ?: "")
         courseDates.enqueue(object : Callback<CourseDates> {
             override fun onResponse(call: Call<CourseDates>, response: Response<CourseDates>) {
                 if (response.isSuccessful) {
@@ -98,42 +99,28 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
                                 -1, null)
                     }
                 }
-                mBinding.loadingIndicator.loadingIndicator.visibility = View.GONE
-                mBinding.swipeContainer.isRefreshing = false
+                binding.loadingIndicator.loadingIndicator.showProgress(false)
+                binding.swipeContainer.isRefreshing = false
             }
 
             override fun onFailure(call: Call<CourseDates>, t: Throwable) {
                 context?.let { errorNotification.showError(it, t, -1, null) }
-                mBinding.swipeContainer.isRefreshing = false
-                mBinding.loadingIndicator.loadingIndicator.visibility = View.GONE
+                binding.swipeContainer.isRefreshing = false
+                binding.loadingIndicator.loadingIndicator.showProgress(false)
             }
         })
     }
 
     private fun populateCourseDates(list: List<CourseDateBlock>) {
-        data = HashMap<String, ArrayList<CourseDateBlock>>()
+        data = HashMap()
         sortKeys = ArrayList()
         if (list.isNotEmpty()) {
-            list.forEach { item ->
-                if (data.containsKey(item.getSimpleDateTime())) {
-                    (data[item.getSimpleDateTime()] as ArrayList).add(item)
-                } else {
-                    data[item.getSimpleDateTime()] = arrayListOf(item)
-                    sortKeys.add(item.getSimpleDateTime())
-                }
-            }
-            if (isContainToday(list).not() && DateUtil.isDatePast(sortKeys.first()) && DateUtil.isDateDue(sortKeys.last())) {
-                var ind = 0
-                sortKeys.forEachIndexed { index, str ->
-                    if (index < sortKeys.lastIndex && DateUtil.isDatePast(str) && DateUtil.isDateDue(sortKeys[index + 1])) {
-                        ind = index + 1
-                    }
-                }
-                sortKeys.add(ind, getTodayDateBlock().getSimpleDateTime())
-
+            populateCourseDatesInBlock(list)
+            if (isContainToday(list).not()) {
+                addTodayBlock()
             }
             setDateBlockTag()
-            mBinding.dateList.apply {
+            binding.dateList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = CourseDatesAdapter(data, sortKeys, onLinkClick)
             }
@@ -148,6 +135,23 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
     }
 
+    /**
+     * Rearrange the date blocks according to design and stack all the blocks of same date in one key
+     */
+    private fun populateCourseDatesInBlock(list: List<CourseDateBlock>) {
+        list.forEach { item ->
+            if (data.containsKey(item.getSimpleDateTime())) {
+                (data[item.getSimpleDateTime()] as ArrayList).add(item)
+            } else {
+                data[item.getSimpleDateTime()] = arrayListOf(item)
+                sortKeys.add(item.getSimpleDateTime())
+            }
+        }
+    }
+
+    /**
+     * Utility Method to check if the list contains the today date block or not
+     */
     private fun isContainToday(list: List<CourseDateBlock>): Boolean {
         list.forEach {
             if (it.isToday()) {
@@ -157,12 +161,31 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
         return false
     }
 
+    /**
+     * Add today date block manually if not present in date list
+     */
+    private fun addTodayBlock() {
+        if (DateUtil.isDatePast(sortKeys.first()) && DateUtil.isDateDue(sortKeys.last())) {
+            var ind = 0
+            sortKeys.forEachIndexed { index, str ->
+                if (index < sortKeys.lastIndex && DateUtil.isDatePast(str) && DateUtil.isDateDue(sortKeys[index + 1])) {
+                    ind = index + 1
+                }
+            }
+            sortKeys.add(ind, getTodayDateBlock().getSimpleDateTime())
+        }
+    }
+
+    /**
+     * Set the Date Block Tag against single date set
+     */
     private fun setDateBlockTag() {
         var dueNextCount = 0
         sortKeys.forEach { key ->
             data[key]?.forEach { item ->
                 var dateBlockTag: CourseDateType = getDateTypeTag(item)
-                if (dateBlockTag.equals(CourseDateType.DUE_NEXT)) {
+                //Setting Due Next only for first occurrence
+                if (dateBlockTag == CourseDateType.DUE_NEXT) {
                     if (dueNextCount == 0)
                         dueNextCount += 1
                     else
@@ -173,6 +196,9 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
         }
     }
 
+    /**
+     * Method to get the Tag to be set on Pill/Badge of date block
+     */
     private fun getDateTypeTag(item: CourseDateBlock): CourseDateType {
         var dateBlockTag: CourseDateType = CourseDateType.BLANK
         item.date_type?.let {

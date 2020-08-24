@@ -1,7 +1,6 @@
 package org.edx.mobile.util;
 
 import android.annotation.SuppressLint;
-
 import androidx.annotation.Nullable;
 
 import com.google.gson.internal.bind.util.ISO8601Utils;
@@ -22,7 +21,7 @@ public class DateUtil {
      * Stamp
      */
     public static Date convertToDate(String date) {
-        if (date == null) {
+        if (date==null){
             return null;
         }
 

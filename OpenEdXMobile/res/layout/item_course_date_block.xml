@@ -47,6 +47,7 @@
             app:layout_constraintTop_toTopOf="@id/bullet_today"
             binding:bulletBackground="@{dateType.dateBlockTag}"
             binding:isDatePast="@{dateType.isDatePassed()}"
+            binding:isVisible="@{!dateType.isToday()}"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -56,8 +57,7 @@
             android:layout_marginStart="@dimen/edx_half_margin"
             android:layout_marginTop="@dimen/widget_margin_half"
             android:layout_marginEnd="@dimen/edx_half_margin"
-            android:background="@drawable/yellow_circle_black_border"
-            android:translationZ="90dp"
+            android:src="@drawable/yellow_circle_black_border"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

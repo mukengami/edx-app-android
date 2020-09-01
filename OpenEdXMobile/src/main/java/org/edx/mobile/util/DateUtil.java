@@ -21,7 +21,7 @@ public class DateUtil {
      * Stamp
      */
     public static Date convertToDate(String date) {
-        if (date==null){
+        if(date==null){
             return null;
         }
 
@@ -29,7 +29,7 @@ public class DateUtil {
         final ParsePosition parsePosition = new ParsePosition(0);
         try {
             parsedate = ISO8601Utils.parse(date, parsePosition);
-            logger.debug("Parsed Data" + parsedate);
+            logger.debug("Parsed Data"+parsedate);
             return parsedate;
 
         } catch (ParseException e) {
@@ -41,12 +41,12 @@ public class DateUtil {
     /**
      * @return The current date and time in a ISO 8601 compliant format.
      */
-    public static String getCurrentTimeStamp() {
+    public static String getCurrentTimeStamp(){
         return ISO8601Utils.format(new Date(), true); // Find todays date
     }
 
     /**
-     * This function returns course start date in the MMMM dd, yyyy format
+     *  This function returns course start date in the MMMM dd, yyyy format
      */
     public static String formatCourseNotStartedDate(String date) {
         try {

@@ -15,6 +15,7 @@ import org.edx.mobile.model.api.SyncLastAccessedSubsectionResponse;
 import org.edx.mobile.model.course.BlockPath;
 import org.edx.mobile.model.course.BlockType;
 import org.edx.mobile.model.course.CourseComponent;
+import org.edx.mobile.model.course.CourseDates;
 import org.edx.mobile.model.course.CourseStructureV1Model;
 import org.edx.mobile.model.course.DiscussionBlockModel;
 import org.edx.mobile.model.course.DiscussionData;
@@ -171,6 +172,18 @@ public class ApiTests extends HttpBaseTestCase {
         executeStrict(courseService.enrollInACourse(new CourseService.EnrollBody(courseId, true)));
         print("success");
         print("test: finished: reset password");
+    }
+
+    @Test
+    public void testCourseDatesResponse() throws Exception {
+        login();
+
+        print("test: Course Dates Response");
+
+        CourseDates dates = executeStrict(courseAPI.getCourseDates(""));
+        assertNotNull(dates);
+        print("success");
+        print("test: Course Dates Api working fine");
     }
 
     @Test

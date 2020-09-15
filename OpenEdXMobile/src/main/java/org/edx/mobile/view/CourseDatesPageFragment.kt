@@ -82,11 +82,15 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
             binding.loadingIndicator.loadingIndicator.showProgress(showLoader)
         })
 
-        viewModel.courseDateBlocks.observe(this, Observer { list ->
-            if (list.isNotEmpty()) {
-                viewModel.populateCourseDates()
+        viewModel.courseDates.observe(this, Observer { dates ->
+            if (dates.course_date_blocks.isNullOrEmpty()) {
+                viewModel.setError(HttpStatus.NO_CONTENT, getString(R.string.course_dates_unavailable_message))
             } else {
-                viewModel.setError(HttpStatus.NO_CONTENT, "No Dates available against this course.")
+                dates.populateCourseDates()
+                binding.rvDates.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = CourseDatesAdapter(dates.data, dates.sortKeys, onLinkClick)
+                }
             }
         })
 
@@ -98,15 +102,6 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
         viewModel.swipeRefresh.observe(this, Observer { enableSwipeListener ->
             binding.swipeContainer.isRefreshing = enableSwipeListener
-        })
-
-        viewModel.isDateListReady.observe(this, Observer {
-            if (it) {
-                binding.rvDates.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = CourseDatesAdapter(viewModel.data, viewModel.sortKeys, onLinkClick)
-                }
-            }
         })
     }
 }

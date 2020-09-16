@@ -90,10 +90,6 @@ public class IconProgressBar extends ProgressBar {
         }
     }
 
-    public void showProgress(boolean isShow) {
-        this.setVisibility(isShow ? View.VISIBLE : View.GONE);
-    }
-
     public void setIndeterminateIconColorResource(@ColorRes int colorResId) {
         // Since we have an @ColorRes annotation on the colorRes parameter,
         // we can be sure that we will get a non-null ColorStateList.

@@ -7,16 +7,20 @@ import org.edx.mobile.util.DateUtil
 data class CourseDateBlock(
         @SerializedName("complete") var complete: Boolean = false,
         @SerializedName("date") val date: String = "",
-        @SerializedName("date_type") var date_type: String? = "",
+        @SerializedName("date_type") var dateType: String? = "",
         @SerializedName("description") val description: String = "",
-        @SerializedName("learner_has_access") var learner_has_access: Boolean = false,
+        @SerializedName("learner_has_access") var learnerHasAccess: Boolean = false,
         @SerializedName("link") val link: String = "",
-        @SerializedName("link_text") val link_text: String = "",
+        @SerializedName("link_text") val linkText: String = "",
         @SerializedName("title") val title: String = "",
         var dateBlockTag: CourseDateType = CourseDateType.BLANK
 
 ) {
-    fun isToday(): Boolean = (DateUtil.isDateToday(date) || date_type.equals(DateTypes.TODAY_DATE))
+    companion object {
+        fun getTodayDateBlock() = CourseDateBlock(date = DateUtil.getCurrentTimeStamp(), dateType = CourseDateBlock.DateTypes.TODAY_DATE)
+    }
+
+    fun isToday(): Boolean = (DateUtil.isDateToday(date) || dateType.equals(DateTypes.TODAY_DATE))
 
     fun getFormattedDate(): String = DateUtil.formatCourseDate(date)
 
@@ -24,9 +28,9 @@ data class CourseDateBlock(
 
     fun isDatePassed(): Boolean = DateUtil.isDatePast(date)
 
-    fun isAssignment(): Boolean = date_type.equals(DateTypes.ASSIGNMENT_DUE_DATE)
+    fun isAssignment(): Boolean = dateType.equals(DateTypes.ASSIGNMENT_DUE_DATE)
 
-    fun isLearnerAssignment(): Boolean = learner_has_access && isAssignment()
+    fun isLearnerAssignment(): Boolean = learnerHasAccess && isAssignment()
 
     fun showLink(): Boolean = link.isNotBlank() && isLearnerAssignment()
 

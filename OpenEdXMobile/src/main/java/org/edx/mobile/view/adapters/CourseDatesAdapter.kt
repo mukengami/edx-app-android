@@ -1,6 +1,5 @@
 package org.edx.mobile.view.adapters
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +11,6 @@ import org.edx.mobile.R
 import org.edx.mobile.databinding.ItemCourseDateBlockBinding
 import org.edx.mobile.interfaces.OnDateBlockListener
 import org.edx.mobile.model.course.CourseDateBlock
-import org.edx.mobile.util.DateUtil
-import org.edx.mobile.view.CourseDatesPageFragment
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -58,8 +55,8 @@ class CourseDatesAdapter(private val data: HashMap<String, ArrayList<CourseDateB
                 holder.binding.lineBelowDot.visibility = View.INVISIBLE
             }
             val key = keys[position]
-            if (key.equals(CourseDatesPageFragment.getTodayDateBlock().getSimpleDateTime(), ignoreCase = true) && data[key].isNullOrEmpty()) {
-                holder.bind(CourseDatesPageFragment.getTodayDateBlock(), arrayListOf())
+            if (key.equals(CourseDateBlock.getTodayDateBlock().getSimpleDateTime(), ignoreCase = true) && data[key].isNullOrEmpty()) {
+                holder.bind(CourseDateBlock.getTodayDateBlock(), arrayListOf())
             } else {
                 holder.bind(data[key]?.first(), data[key])
             }
@@ -68,8 +65,8 @@ class CourseDatesAdapter(private val data: HashMap<String, ArrayList<CourseDateB
 
     class CourseDateHolder(var binding: ItemCourseDateBlockBinding, private val onLinkClick: OnDateBlockListener) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CourseDateBlock?, list: ArrayList<CourseDateBlock>?) {
-            binding.date.setTypeface(null, Typeface.BOLD)
-            binding.dateTag.setTypeface(null, Typeface.BOLD_ITALIC)
+//            binding.date.setTypeface(null, Typeface.BOLD)
+//            binding.dateTag.setTypeface(null, Typeface.BOLD_ITALIC)
             binding.setVariable(BR.dateType, item)
             binding.bulletToday.bringToFront()
             binding.list = if (list.isNullOrEmpty().not()) list else arrayListOf()

@@ -9,14 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.edx.mobile.R
+import org.edx.mobile.core.EdxEnvironment
 import org.edx.mobile.course.CourseAPI
 import org.edx.mobile.databinding.FragmentCourseDatesPageBinding
 import org.edx.mobile.http.HttpStatus
+import org.edx.mobile.http.HttpStatusException
 import org.edx.mobile.http.notifications.FullScreenErrorNotification
 import org.edx.mobile.interfaces.OnDateBlockListener
-import org.edx.mobile.model.course.CourseDateBlock
 import org.edx.mobile.util.BrowserUtil
-import org.edx.mobile.util.DateUtil
 import org.edx.mobile.util.UiUtil
 import org.edx.mobile.view.adapters.CourseDatesAdapter
 import org.edx.mobile.viewModel.CourseDateViewModel
@@ -28,6 +28,9 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
     @Inject
     private lateinit var courseAPI: CourseAPI
+
+    @Inject
+    private lateinit var environment: EdxEnvironment
     private lateinit var errorNotification: FullScreenErrorNotification
 
     private lateinit var binding: FragmentCourseDatesPageBinding
@@ -45,9 +48,6 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
             courseBundle.putString(Router.EXTRA_COURSE_ID, courseId)
             return courseBundle
         }
-
-        @JvmStatic
-        fun getTodayDateBlock() = CourseDateBlock(date = DateUtil.getCurrentTimeStamp(), date_type = CourseDateBlock.DateTypes.TODAY_DATE)
     }
 
     override fun isShowingFullScreenError(): Boolean {
@@ -73,30 +73,42 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
             viewModel.fetchCourseDates()
         }
         UiUtil.setSwipeRefreshLayoutColors(binding.swipeContainer)
-        viewModel.startViewModel(courseID = getArgumentString(Router.EXTRA_COURSE_ID))
         initObserver()
+        viewModel.startViewModel(courseID = getStringArgument(Router.EXTRA_COURSE_ID))
     }
 
     private fun initObserver() {
         viewModel.showLoader.observe(this, Observer { showLoader ->
-            binding.loadingIndicator.loadingIndicator.showProgress(showLoader)
+            binding.loadingIndicator.loadingIndicator.visibility = if (showLoader) View.VISIBLE else View.GONE
         })
 
         viewModel.courseDates.observe(this, Observer { dates ->
-            if (dates.course_date_blocks.isNullOrEmpty()) {
+            if (dates.courseDateBlocks.isNullOrEmpty()) {
                 viewModel.setError(HttpStatus.NO_CONTENT, getString(R.string.course_dates_unavailable_message))
             } else {
-                dates.populateCourseDates()
+                dates.organiseCourseDates()
                 binding.rvDates.apply {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = CourseDatesAdapter(dates.data, dates.sortKeys, onLinkClick)
+                    adapter = CourseDatesAdapter(dates.courseDatesMap, dates.sortKeys, onLinkClick)
                 }
             }
         })
 
         viewModel.errorMessage.observe(this, Observer { throwable ->
             if (throwable != null) {
-                errorNotification.showError(contextOrThrow, throwable, -1, null)
+                if (throwable is HttpStatusException) {
+                    when (throwable.statusCode) {
+                        HttpStatus.UNAUTHORIZED -> {
+                            environment.router?.forceLogout(contextOrThrow,
+                                    environment.analyticsRegistry,
+                                    environment.notificationDelegate)
+                        }
+                        else ->
+                            errorNotification.showError(contextOrThrow, throwable, -1, null)
+                    }
+                } else {
+                    errorNotification.showError(contextOrThrow, throwable, -1, null)
+                }
             }
         })
 

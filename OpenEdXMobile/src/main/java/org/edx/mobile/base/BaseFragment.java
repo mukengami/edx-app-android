@@ -30,13 +30,22 @@ public class BaseFragment extends RoboFragment {
         EventBus.getDefault().post(new NewRelicEvent(getClass().getSimpleName()));
     }
 
+    /**
+     * Utility method to make getContext null safe
+     * @return context if not null or throw exception else wise
+     */
     public Context getContextOrThrow() {
         if (getContext() != null)
             return getContext();
         throw new IllegalStateException("Context can only be accessed when attached with activity");
     }
 
-    public String getArgumentString(String key) {
+    /**
+     * Utility method to get String argument null safe
+     * @param key requested argument
+     * @return argument value if found or throw exception else wise
+     */
+    public String getStringArgument(String key) {
         if (getArguments() != null && getArguments().getString(key) != null) {
             return getArguments().getString(key);
         }

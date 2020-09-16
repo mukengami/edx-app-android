@@ -60,7 +60,6 @@ class CourseDateViewModel(private val courseAPI: CourseAPI) : ViewModel() {
                 _errorMessage.value = t
                 _swipeRefresh.postValue(false)
             }
-
         })
     }
 

@@ -100,11 +100,11 @@ public class CourseAPI {
     }
 
     /**
-     * @return Course dates.
+     * @return Course dates against the given course Id.
      */
     @NonNull
     public Call<CourseDates> getCourseDates(@NonNull String courseId) {
-        return courseService.getCourseDate(courseId);
+        return courseService.getCourseDates(courseId);
     }
 
     /**

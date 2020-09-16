@@ -136,7 +136,7 @@ public interface CourseService {
     Call<JSONObject> markBlocksCompletion(@Body BlocksCompletionBody completionBody);
 
     @GET("api/course_home/v1/dates/{course_key}")
-    Call<CourseDates> getCourseDate(@Path("course_key") String courseId);
+    Call<CourseDates> getCourseDates(@Path("course_key") String courseId);
 
     final class BlocksCompletionBody {
         @NonNull String username;

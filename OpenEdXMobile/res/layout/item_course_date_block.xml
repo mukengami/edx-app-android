@@ -100,7 +100,7 @@
                     android:text="@{dateType.getFormattedDate()}"
                     android:textColor="@color/switch_text_color"
                     android:textSize="@dimen/edx_large"
-                    android:textStyle="bold" />
+                    fontPath="fonts/OpenSans-Semibold.ttf" />
 
                 <TextView
                     android:id="@+id/date_tag"
@@ -115,6 +115,7 @@
                     android:paddingBottom="3dp"
                     android:textColor="@color/white"
                     android:textSize="@dimen/edx_small"
+                    fontPath="fonts/OpenSans-SemiboldItalic.ttf"
                     binding:isToday="@{dateType.today}"
                     binding:tagBackground="@{dateType.dateBlockTag}"
                     tools:visibility="visible" />

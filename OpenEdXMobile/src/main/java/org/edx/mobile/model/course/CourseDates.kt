@@ -3,21 +3,20 @@ package org.edx.mobile.model.course
 import com.google.gson.annotations.SerializedName
 import org.edx.mobile.util.CourseDateType
 import org.edx.mobile.util.DateUtil
-import org.edx.mobile.view.CourseDatesPageFragment
 
 data class CourseDates(
-        @SerializedName("dates_banner_info") val dates_banner_info: CourseDatesBannerInfo,
-        @SerializedName("course_date_blocks") val course_date_blocks: List<CourseDateBlock>?,
-        @SerializedName("missed_deadlines") val missed_deadlines: Boolean = false,
-        @SerializedName("missed_gated_content") val missed_gated_content: Boolean = false,
-        @SerializedName("learner_is_full_access") val learner_is_full_access: Boolean = false,
-        @SerializedName("user_timezone") val user_timezone: String = "",
-        @SerializedName("verified_upgrade_link") val verified_upgrade_link: String = "",
-        var data: HashMap<String, ArrayList<CourseDateBlock>> = HashMap(),
+        @SerializedName("dates_banner_info") val datesBannerInfo: CourseDatesBannerInfo,
+        @SerializedName("course_date_blocks") val courseDateBlocks: List<CourseDateBlock>?,
+        @SerializedName("missed_deadlines") val missedDeadlines: Boolean = false,
+        @SerializedName("missed_gated_content") val missedGatedContent: Boolean = false,
+        @SerializedName("learner_is_full_access") val learnerIsFullAccess: Boolean = false,
+        @SerializedName("user_timezone") val userTimezone: String = "",
+        @SerializedName("verified_upgrade_link") val verifiedUpgradeLink: String = "",
+        var courseDatesMap: HashMap<String, ArrayList<CourseDateBlock>> = HashMap(),
         var sortKeys: ArrayList<String> = ArrayList()
 ) {
-    fun populateCourseDates() {
-        populateCourseDatesInBlock()
+    fun organiseCourseDates() {
+        organiseCourseDatesInBlock()
         if (isContainToday().not()) {
             addTodayBlock()
         }
@@ -25,16 +24,16 @@ data class CourseDates(
     }
 
     /**
-     * Rearrange the date blocks according to design and stack all the blocks of same date in one key
+     * Map the date blocks according to dates and stack all the blocks of same date against one key
      */
-    private fun populateCourseDatesInBlock() {
-        data = HashMap()
+    private fun organiseCourseDatesInBlock() {
+        courseDatesMap = HashMap()
         sortKeys = ArrayList()
-        course_date_blocks?.forEach { item ->
-            if (data.containsKey(item.getSimpleDateTime())) {
-                (data[item.getSimpleDateTime()] as ArrayList).add(item)
+        courseDateBlocks?.forEach { item ->
+            if (courseDatesMap.containsKey(item.getSimpleDateTime())) {
+                (courseDatesMap[item.getSimpleDateTime()] as ArrayList).add(item)
             } else {
-                data[item.getSimpleDateTime()] = arrayListOf(item)
+                courseDatesMap[item.getSimpleDateTime()] = arrayListOf(item)
                 sortKeys.add(item.getSimpleDateTime())
             }
         }
@@ -44,7 +43,7 @@ data class CourseDates(
      * Utility Method to check if the list contains the today date block or not
      */
     private fun isContainToday(): Boolean {
-        course_date_blocks?.forEach {
+        courseDateBlocks?.forEach {
             if (it.isToday()) {
                 return true
             }
@@ -63,7 +62,7 @@ data class CourseDates(
                     ind = index + 1
                 }
             }
-            sortKeys.add(ind, CourseDatesPageFragment.getTodayDateBlock().getSimpleDateTime())
+            sortKeys.add(ind, CourseDateBlock.getTodayDateBlock().getSimpleDateTime())
         }
     }
 
@@ -73,7 +72,7 @@ data class CourseDates(
     private fun setDateBlockTag() {
         var dueNextCount = 0
         sortKeys.forEach { key ->
-            data[key]?.forEach { item ->
+            courseDatesMap[key]?.forEach { item ->
                 var dateBlockTag: CourseDateType = getDateTypeTag(item)
                 //Setting Due Next only for first occurrence
                 if (dateBlockTag == CourseDateType.DUE_NEXT) {
@@ -92,7 +91,7 @@ data class CourseDates(
      */
     private fun getDateTypeTag(item: CourseDateBlock): CourseDateType {
         var dateBlockTag: CourseDateType = CourseDateType.BLANK
-        item.date_type?.let {
+        item.dateType?.let {
             when (it) {
                 CourseDateBlock.DateTypes.TODAY_DATE ->
                     dateBlockTag = CourseDateType.TODAY
@@ -104,7 +103,7 @@ data class CourseDates(
                         item.complete -> {
                             dateBlockTag = CourseDateType.COMPLETED
                         }
-                        item.learner_has_access -> {
+                        item.learnerHasAccess -> {
                             dateBlockTag = when {
                                 item.link.isEmpty() -> {
                                     CourseDateType.NOT_YET_RELEASED

@@ -7,12 +7,15 @@ import okhttp3.MediaType
 import okhttp3.ResponseBody
 import org.edx.mobile.course.CourseAPI
 import org.edx.mobile.http.HttpStatusException
+import org.edx.mobile.http.model.Result
 import org.edx.mobile.model.course.CourseDates
-import retrofit2.Call
-import retrofit2.Callback
+import org.edx.mobile.repositorie.CourseDatesRepository
 import retrofit2.Response
+import org.edx.mobile.http.model.NetworkResponseCallback as NetworkResponseCallback1
 
-class CourseDateViewModel(private val courseAPI: CourseAPI) : ViewModel() {
+class CourseDateViewModel(val courseAPI: CourseAPI) : ViewModel() {
+
+    private val repository: CourseDatesRepository = CourseDatesRepository.getInstance(courseAPI = courseAPI)
 
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean>
@@ -37,30 +40,30 @@ class CourseDateViewModel(private val courseAPI: CourseAPI) : ViewModel() {
         fetchCourseDates()
     }
 
-    fun fetchCourseDates() {
+    fun fetchCourseDates(isSwipeRefresh: Boolean = false) {
         _errorMessage.value = null
-        _swipeRefresh.value = false
-        _showLoader.value = true
-        courseAPI.getCourseDates(courseID).enqueue(object : Callback<CourseDates> {
-            override fun onResponse(call: Call<CourseDates>, response: Response<CourseDates>) {
-                _showLoader.postValue(false)
-                if (response.isSuccessful && response.body() != null) {
-                    response.body()?.let {
-                        _courseDates.value = it
+        _swipeRefresh.value = isSwipeRefresh
+        _showLoader.value = isSwipeRefresh.not()
+        repository.getCourseDates(
+                courseId = courseID,
+                callback = object : NetworkResponseCallback1<CourseDates> {
+                    override fun onSuccess(result: Result.Success<CourseDates>) {
+                        if (result.isSuccessful && result.data != null) {
+                            _courseDates.value = result.data
+                        } else {
+                            setError(result.code, result.message)
+                        }
+                        _showLoader.postValue(false)
+                        _swipeRefresh.postValue(false)
                     }
-                } else {
-                    _errorMessage.value = HttpStatusException(Response.error<Any>(response.code(),
-                            ResponseBody.create(MediaType.parse("text/plain"), response.message())))
-                }
-                _swipeRefresh.postValue(false)
-            }
 
-            override fun onFailure(call: Call<CourseDates>, t: Throwable) {
-                _showLoader.postValue(false)
-                _errorMessage.value = t
-                _swipeRefresh.postValue(false)
-            }
-        })
+                    override fun onError(error: Result.Error) {
+                        _showLoader.postValue(false)
+                        _errorMessage.value = error.throwable
+                        _swipeRefresh.postValue(false)
+                    }
+                }
+        )
     }
 
     fun setError(code: Int, msg: String) {

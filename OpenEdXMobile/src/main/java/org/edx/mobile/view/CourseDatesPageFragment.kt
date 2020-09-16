@@ -70,7 +70,7 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
             // Hide the progress bar as swipe layout has its own progress indicator
             binding.loadingIndicator.loadingIndicator.visibility = View.GONE
             errorNotification.hideError()
-            viewModel.fetchCourseDates()
+            viewModel.fetchCourseDates(true)
         }
         UiUtil.setSwipeRefreshLayoutColors(binding.swipeContainer)
         initObserver()

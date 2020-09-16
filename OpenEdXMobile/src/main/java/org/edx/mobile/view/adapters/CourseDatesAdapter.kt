@@ -65,8 +65,6 @@ class CourseDatesAdapter(private val data: HashMap<String, ArrayList<CourseDateB
 
     class CourseDateHolder(var binding: ItemCourseDateBlockBinding, private val onLinkClick: OnDateBlockListener) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CourseDateBlock?, list: ArrayList<CourseDateBlock>?) {
-//            binding.date.setTypeface(null, Typeface.BOLD)
-//            binding.dateTag.setTypeface(null, Typeface.BOLD_ITALIC)
             binding.setVariable(BR.dateType, item)
             binding.bulletToday.bringToFront()
             binding.list = if (list.isNullOrEmpty().not()) list else arrayListOf()

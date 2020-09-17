@@ -217,7 +217,10 @@ def schedule_run(project_arn, name, device_pool_arn, app_arn,
               'testSpecArn': test_specs_arn
               },
     )
-
+    print("++++++++++++++++++++++++++++++++++++++++++++++")
+    print(str(schedule_run_result))
+    print(str(schedule_run_result['run']))
+    print("++++++++++++++++++++++++++++++++++++++++++++++")
     run_arn = schedule_run_result['run']['arn']
 
     test_run = device_farm.get_run(arn=run_arn)

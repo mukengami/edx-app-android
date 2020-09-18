@@ -7,15 +7,15 @@
     <data>
 
         <variable
-            name="dateType"
+            name="dateBlock"
             type="org.edx.mobile.model.course.CourseDateBlock" />
 
         <variable
-            name="listener"
+            name="dateItemListener"
             type="org.edx.mobile.interfaces.OnDateBlockListener" />
 
         <variable
-            name="list"
+            name="dateBlockList"
             type="java.util.ArrayList&lt;org.edx.mobile.model.course.CourseDateBlock&gt;" />
     </data>
 
@@ -39,21 +39,21 @@
 
         <ImageView
             android:id="@+id/bullet"
-            android:layout_width="@dimen/bullet_width"
-            android:layout_height="@dimen/bullet_height"
+            android:layout_width="@dimen/normal_bullet_size"
+            android:layout_height="@dimen/normal_bullet_size"
             app:layout_constraintBottom_toBottomOf="@id/bullet_today"
             app:layout_constraintEnd_toEndOf="@id/bullet_today"
             app:layout_constraintStart_toStartOf="@+id/bullet_today"
             app:layout_constraintTop_toTopOf="@id/bullet_today"
-            binding:bulletBackground="@{dateType.dateBlockTag}"
-            binding:isDatePast="@{dateType.isDatePassed()}"
-            binding:isVisible="@{!dateType.isToday()}"
+            binding:bulletBackground="@{dateBlock.dateBlockBadge}"
+            binding:isDatePast="@{dateBlock.isDatePassed()}"
+            binding:isVisible="@{!dateBlock.isToday()}"
             tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/bullet_today"
-            android:layout_width="@dimen/today_bullet_width"
-            android:layout_height="@dimen/today_bullet_height"
+            android:layout_width="@dimen/today_bullet_size"
+            android:layout_height="@dimen/today_bullet_size"
             android:layout_marginStart="@dimen/edx_half_margin"
             android:layout_marginTop="@dimen/widget_margin_half"
             android:layout_marginEnd="@dimen/edx_half_margin"
@@ -61,7 +61,7 @@
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            binding:isVisible="@{dateType.isToday()}"
+            binding:isVisible="@{dateBlock.isToday()}"
             tools:ignore="ContentDescription"
             tools:visibility="visible" />
 
@@ -85,8 +85,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bullet"
             app:layout_constraintTop_toTopOf="parent"
-            binding:addView="@{list}"
-            binding:clickListener="@{listener}">
+            binding:addView="@{dateBlockList}"
+            binding:clickListener="@{dateItemListener}">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -95,15 +95,17 @@
 
                 <TextView
                     android:id="@+id/date"
+                    fontPath="fonts/OpenSans-Semibold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{dateType.getFormattedDate()}"
+                    android:text="@{dateBlock.getFormattedDate()}"
                     android:textColor="@color/switch_text_color"
                     android:textSize="@dimen/edx_large"
-                    fontPath="fonts/OpenSans-Semibold.ttf" />
+                    tools:text="Wed, Aug 12, 2020" />
 
                 <TextView
                     android:id="@+id/date_tag"
+                    fontPath="fonts/OpenSans-SemiboldItalic.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/edx_half_margin"
@@ -115,9 +117,10 @@
                     android:paddingBottom="3dp"
                     android:textColor="@color/white"
                     android:textSize="@dimen/edx_small"
-                    fontPath="fonts/OpenSans-SemiboldItalic.ttf"
-                    binding:isToday="@{dateType.today}"
-                    binding:tagBackground="@{dateType.dateBlockTag}"
+                    binding:badgeBackground="@{dateBlock.dateBlockBadge}"
+                    binding:isToday="@{dateBlock.today}"
+                    tools:background="@drawable/yellow_roundedbg"
+                    tools:text="Today"
                     tools:visibility="visible" />
 
             </LinearLayout>

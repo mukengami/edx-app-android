@@ -31,7 +31,7 @@ public class BaseFragment extends RoboFragment {
     }
 
     /**
-     * Utility method to make getContext null safe
+     * Method to make getContext null safe
      * @return context if not null or throw exception else wise
      */
     public Context getContextOrThrow() {
@@ -41,7 +41,7 @@ public class BaseFragment extends RoboFragment {
     }
 
     /**
-     * Utility method to get String argument null safe
+     * Method to get String argument null safe
      * @param key requested argument
      * @return argument value if found or throw exception else wise
      */

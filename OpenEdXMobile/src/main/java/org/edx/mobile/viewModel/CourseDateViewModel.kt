@@ -5,17 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import okhttp3.MediaType
 import okhttp3.ResponseBody
-import org.edx.mobile.course.CourseAPI
 import org.edx.mobile.http.HttpStatusException
+import org.edx.mobile.http.model.NetworkResponseCallback
 import org.edx.mobile.http.model.Result
 import org.edx.mobile.model.course.CourseDates
 import org.edx.mobile.repositorie.CourseDatesRepository
 import retrofit2.Response
-import org.edx.mobile.http.model.NetworkResponseCallback as NetworkResponseCallback1
 
-class CourseDateViewModel(val courseAPI: CourseAPI) : ViewModel() {
-
-    private val repository: CourseDatesRepository = CourseDatesRepository.getInstance(courseAPI = courseAPI)
+class CourseDateViewModel(
+        private val repository: CourseDatesRepository = CourseDatesRepository.getInstance()
+) : ViewModel() {
 
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean>
@@ -33,20 +32,13 @@ class CourseDateViewModel(val courseAPI: CourseAPI) : ViewModel() {
     val errorMessage: LiveData<Throwable>
         get() = _errorMessage
 
-    private lateinit var courseID: String
-
-    fun startViewModel(courseID: String) {
-        this.courseID = courseID
-        fetchCourseDates()
-    }
-
-    fun fetchCourseDates(isSwipeRefresh: Boolean = false) {
+    fun fetchCourseDates(courseID: String, isSwipeRefresh: Boolean = false) {
         _errorMessage.value = null
         _swipeRefresh.value = isSwipeRefresh
         _showLoader.value = isSwipeRefresh.not()
         repository.getCourseDates(
                 courseId = courseID,
-                callback = object : NetworkResponseCallback1<CourseDates> {
+                callback = object : NetworkResponseCallback<CourseDates> {
                     override fun onSuccess(result: Result.Success<CourseDates>) {
                         if (result.isSuccessful && result.data != null) {
                             _courseDates.value = result.data

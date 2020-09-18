@@ -9,7 +9,6 @@
 
     <color name="white">@android:color/white</color>
     <color name="black">@android:color/black</color>
-    <color name="transparent">#00000000</color>
     <color name="transparent_black">#90000000</color>
     <color name="transparent_black_80">#CC000000</color>
     <color name="transparent_black_90">#e5000000</color>
@@ -88,4 +87,8 @@
     <color name="tag_light_silver">#f3f3f4</color>
     <color name="tag_light_silver_border">#767676</color>
     <color name="course_today_date">#ffdb87</color>
+    <color name="course_date_badge_black">#000000</color>
+    <color name="course_date_badge_white">#ffffff</color>
+    <color name="course_date_badge_silver">#767676</color>
+    <color name="course_date_badge_gray">#2d323e</color>
 </resources>

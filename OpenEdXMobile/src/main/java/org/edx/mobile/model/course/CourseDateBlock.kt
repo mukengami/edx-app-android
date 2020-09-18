@@ -13,11 +13,12 @@ data class CourseDateBlock(
         @SerializedName("link") val link: String = "",
         @SerializedName("link_text") val linkText: String = "",
         @SerializedName("title") val title: String = "",
-        var dateBlockTag: CourseDateType = CourseDateType.BLANK
+        // Local property to assign a badge to a date block according to desired result
+        var dateBlockBadge: CourseDateType = CourseDateType.BLANK
 
 ) {
     companion object {
-        fun getTodayDateBlock() = CourseDateBlock(date = DateUtil.getCurrentTimeStamp(), dateType = CourseDateBlock.DateTypes.TODAY_DATE)
+        fun getTodayDateBlock() = CourseDateBlock(date = DateUtil.getCurrentTimeStamp(), dateType = DateTypes.TODAY_DATE)
     }
 
     fun isToday(): Boolean = (DateUtil.isDateToday(date) || dateType.equals(DateTypes.TODAY_DATE))
@@ -26,7 +27,7 @@ data class CourseDateBlock(
 
     fun getSimpleDateTime(): String = DateUtil.convertToSimpleDate(date)
 
-    fun isDatePassed(): Boolean = DateUtil.isDatePast(date)
+    fun isDatePassed(): Boolean = DateUtil.isPastDate(date)
 
     fun isAssignment(): Boolean = dateType.equals(DateTypes.ASSIGNMENT_DUE_DATE)
 

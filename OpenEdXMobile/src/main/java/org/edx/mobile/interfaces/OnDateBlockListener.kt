@@ -1,7 +1,7 @@
 package org.edx.mobile.interfaces
 
 /**
- * Provides callbacks for a date block in course to load its contents on webview.
+ * Provides callbacks to handle the click on the date block in the course.
  */
 interface OnDateBlockListener {
     fun onClick(link: String)

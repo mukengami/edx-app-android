@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.edx.mobile.R
 import org.edx.mobile.core.EdxEnvironment
-import org.edx.mobile.course.CourseAPI
 import org.edx.mobile.databinding.FragmentCourseDatesPageBinding
 import org.edx.mobile.http.HttpStatus
 import org.edx.mobile.http.HttpStatusException
@@ -23,11 +22,7 @@ import org.edx.mobile.viewModel.CourseDateViewModel
 import org.edx.mobile.viewModel.ViewModelFactory
 import javax.inject.Inject
 
-
 class CourseDatesPageFragment : OfflineSupportBaseFragment() {
-
-    @Inject
-    private lateinit var courseAPI: CourseAPI
 
     @Inject
     private lateinit var environment: EdxEnvironment
@@ -35,7 +30,7 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
     private lateinit var binding: FragmentCourseDatesPageBinding
     private lateinit var viewModel: CourseDateViewModel
-    private var onLinkClick: OnDateBlockListener = object : OnDateBlockListener {
+    private var onDateItemClick: OnDateBlockListener = object : OnDateBlockListener {
         override fun onClick(link: String) {
             BrowserUtil.open(activity, link)
         }
@@ -62,7 +57,7 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, ViewModelFactory(courseAPI = courseAPI)).get(CourseDateViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelFactory()).get(CourseDateViewModel::class.java)
 
         errorNotification = FullScreenErrorNotification(binding.swipeContainer)
 
@@ -70,11 +65,11 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
             // Hide the progress bar as swipe layout has its own progress indicator
             binding.loadingIndicator.loadingIndicator.visibility = View.GONE
             errorNotification.hideError()
-            viewModel.fetchCourseDates(true)
+            viewModel.fetchCourseDates(courseID = getStringArgument(Router.EXTRA_COURSE_ID), isSwipeRefresh = true)
         }
         UiUtil.setSwipeRefreshLayoutColors(binding.swipeContainer)
         initObserver()
-        viewModel.startViewModel(courseID = getStringArgument(Router.EXTRA_COURSE_ID))
+        viewModel.fetchCourseDates(courseID = getStringArgument(Router.EXTRA_COURSE_ID), isSwipeRefresh = false)
     }
 
     private fun initObserver() {
@@ -89,7 +84,7 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
                 dates.organiseCourseDates()
                 binding.rvDates.apply {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = CourseDatesAdapter(dates.courseDatesMap, dates.sortKeys, onLinkClick)
+                    adapter = CourseDatesAdapter(dates.courseDatesMap, dates.sortKeys, onDateItemClick)
                 }
             }
         })
@@ -102,13 +97,11 @@ class CourseDatesPageFragment : OfflineSupportBaseFragment() {
                             environment.router?.forceLogout(contextOrThrow,
                                     environment.analyticsRegistry,
                                     environment.notificationDelegate)
+                            return@Observer
                         }
-                        else ->
-                            errorNotification.showError(contextOrThrow, throwable, -1, null)
                     }
-                } else {
-                    errorNotification.showError(contextOrThrow, throwable, -1, null)
                 }
+                errorNotification.showError(contextOrThrow, throwable, -1, null)
             }
         })
 

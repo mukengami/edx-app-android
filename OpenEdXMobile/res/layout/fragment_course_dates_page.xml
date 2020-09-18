@@ -19,7 +19,7 @@
                 android:background="@color/white"
                 android:clipToPadding="false"
                 android:padding="@dimen/date_block_half_x_margin"
-                tools:listitem="@layout/item_course_date_block"/>
+                tools:listitem="@layout/item_course_date_block" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

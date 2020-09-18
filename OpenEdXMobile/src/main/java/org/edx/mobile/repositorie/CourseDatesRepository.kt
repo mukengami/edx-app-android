@@ -1,5 +1,6 @@
 package org.edx.mobile.repositorie
 
+import org.edx.mobile.base.MainApplication
 import org.edx.mobile.course.CourseAPI
 import org.edx.mobile.http.model.NetworkResponseCallback
 import org.edx.mobile.http.model.Result
@@ -7,16 +8,20 @@ import org.edx.mobile.model.course.CourseDates
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import roboguice.RoboGuice
 
-class CourseDatesRepository(val courseAPI: CourseAPI) {
+class CourseDatesRepository {
+
+    private var courseAPI: CourseAPI = RoboGuice.getInjector(MainApplication.application).getInstance(CourseAPI::class.java)
+
     companion object {
         private var instance: CourseDatesRepository? = null
-        fun getInstance(courseAPI: CourseAPI): CourseDatesRepository {
+        fun getInstance(): CourseDatesRepository {
             instance?.let { it ->
                 return it
             }
-            val repository = CourseDatesRepository(courseAPI = courseAPI)
-            instance = repository
+            val repository = CourseDatesRepository()
+            instance = CourseDatesRepository()
             return repository
         }
     }

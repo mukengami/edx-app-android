@@ -3,6 +3,6 @@
     <stroke
         android:width="@dimen/width_hairline"
         android:color="@color/tag_light_silver_border" />
-    <solid android:color="@color/transparent" />
-    <corners android:radius="@dimen/date_block_half_margin" />
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="@dimen/date_block_badge_corner_margin" />
 </shape>

@@ -70,37 +70,45 @@ public class DateUtil {
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM dd, yyyy");
             Date startDate = DateUtil.convertToDate(date);
 
-            String formattedDate = dateFormat.format(startDate);
-            return formattedDate;
+            return dateFormat.format(startDate);
         } catch (Exception e) {
-            //This will be removed when the PR for log changes is merged with master
             logger.error(e);
-            return "";
         }
+        return "";
     }
 
     /**
      * This function match the provide date with current date
      *
-     * @return true if the provided date is today
+     * @return true if the provided date is today else false
      */
     public static boolean isDateToday(String date) {
         return convertToSimpleDate(date).equals(convertToSimpleDate(getCurrentTimeStamp()));
     }
 
-    public static boolean isDatePast(String date) {
-        Date currentDate = convertToDate(getCurrentTimeStamp());
+    /**
+     * This function compare the provide date with current date
+     *
+     * @return true if the provided date is past else false
+     */
+    public static boolean isPastDate(String date) {
+        Date currentDate = new Date();
         Date pastDate = convertToDate(date);
-        if (currentDate != null && pastDate != null) {
+        if (pastDate != null) {
             return pastDate.compareTo(currentDate) < 0;
         }
         return false;
     }
 
-    public static boolean isDateDue(String date) {
-        Date currentDate = convertToDate(getCurrentTimeStamp());
+    /**
+     * This function compare the provide date with current date
+     *
+     * @return true if the provided date is due else false
+     */
+    public static boolean isDueDate(String date) {
+        Date currentDate = new Date();
         Date dueDate = convertToDate(date);
-        if (currentDate != null && dueDate != null) {
+        if (dueDate != null) {
             return dueDate.compareTo(currentDate) > 0;
         }
         return false;
@@ -114,13 +122,11 @@ public class DateUtil {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = DateUtil.convertToDate(date);
 
-            String formattedDate = dateFormat.format(startDate);
-            return formattedDate;
+            return dateFormat.format(startDate);
         } catch (Exception e) {
-            //This will be removed when the PR for log changes is merged with master
             logger.error(e);
-            return "";
         }
+        return "";
     }
 
     /**

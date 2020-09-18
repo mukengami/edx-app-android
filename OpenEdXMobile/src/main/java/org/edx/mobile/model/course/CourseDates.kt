@@ -12,7 +12,9 @@ data class CourseDates(
         @SerializedName("learner_is_full_access") val learnerIsFullAccess: Boolean = false,
         @SerializedName("user_timezone") val userTimezone: String = "",
         @SerializedName("verified_upgrade_link") val verifiedUpgradeLink: String = "",
+        // HashMap to store list the courseDateBlocks against their dates
         var courseDatesMap: HashMap<String, ArrayList<CourseDateBlock>> = HashMap(),
+        // ArrayList to store the sorted list of dates
         var sortKeys: ArrayList<String> = ArrayList()
 ) {
     fun organiseCourseDates() {
@@ -20,7 +22,7 @@ data class CourseDates(
         if (isContainToday().not()) {
             addTodayBlock()
         }
-        setDateBlockTag()
+        setDateBlockBadge()
     }
 
     /**
@@ -40,7 +42,7 @@ data class CourseDates(
     }
 
     /**
-     * Utility Method to check if the list contains the today date block or not
+     * Utility method to check that list contains today's date block or not.
      */
     private fun isContainToday(): Boolean {
         courseDateBlocks?.forEach {
@@ -52,13 +54,13 @@ data class CourseDates(
     }
 
     /**
-     * Add today date block manually if not present in date list
+     * Add today's date block manually if not present in the date list
      */
     private fun addTodayBlock() {
-        if (DateUtil.isDatePast(sortKeys.first()) && DateUtil.isDateDue(sortKeys.last())) {
+        if (DateUtil.isPastDate(sortKeys.first()) && DateUtil.isDueDate(sortKeys.last())) {
             var ind = 0
             sortKeys.forEachIndexed { index, str ->
-                if (index < sortKeys.lastIndex && DateUtil.isDatePast(str) && DateUtil.isDateDue(sortKeys[index + 1])) {
+                if (index < sortKeys.lastIndex && DateUtil.isPastDate(str) && DateUtil.isDueDate(sortKeys[index + 1])) {
                     ind = index + 1
                 }
             }
@@ -67,13 +69,13 @@ data class CourseDates(
     }
 
     /**
-     * Set the Date Block Tag against single date set
+     * Set the Date Block Badge based on the date block data
      */
-    private fun setDateBlockTag() {
+    private fun setDateBlockBadge() {
         var dueNextCount = 0
         sortKeys.forEach { key ->
             courseDatesMap[key]?.forEach { item ->
-                var dateBlockTag: CourseDateType = getDateTypeTag(item)
+                var dateBlockTag: CourseDateType = getDateTypeBadge(item)
                 //Setting Due Next only for first occurrence
                 if (dateBlockTag == CourseDateType.DUE_NEXT) {
                     if (dueNextCount == 0)
@@ -81,15 +83,15 @@ data class CourseDates(
                     else
                         dateBlockTag = CourseDateType.BLANK
                 }
-                item.dateBlockTag = dateBlockTag
+                item.dateBlockBadge = dateBlockTag
             }
         }
     }
 
     /**
-     * Method to get the Tag to be set on Pill/Badge of date block
+     * Return Pill/Badge type of date block based on data
      */
-    private fun getDateTypeTag(item: CourseDateBlock): CourseDateType {
+    private fun getDateTypeBadge(item: CourseDateBlock): CourseDateType {
         var dateBlockTag: CourseDateType = CourseDateType.BLANK
         item.dateType?.let {
             when (it) {
@@ -108,10 +110,10 @@ data class CourseDates(
                                 item.link.isEmpty() -> {
                                     CourseDateType.NOT_YET_RELEASED
                                 }
-                                DateUtil.isDateDue(item.date) -> {
+                                DateUtil.isDueDate(item.date) -> {
                                     CourseDateType.DUE_NEXT
                                 }
-                                DateUtil.isDatePast(item.date) -> {
+                                DateUtil.isPastDate(item.date) -> {
                                     CourseDateType.PAST_DUE
                                 }
                                 else -> {

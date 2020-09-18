@@ -25,7 +25,7 @@ apply plugin: 'edxapp'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt' //used for data binding utils functions
+apply plugin: 'kotlin-kapt' //To enable data binding with kotlin
 apply plugin: 'jacoco-android'
 edx {
     platform = ANDROID

@@ -44,7 +44,7 @@ data class CourseDates(
     /**
      * Utility method to check that list contains today's date block or not.
      */
-    private fun isContainToday(): Boolean {
+    fun isContainToday(): Boolean {
         courseDateBlocks?.forEach {
             if (it.isToday()) {
                 return true
@@ -61,6 +61,7 @@ data class CourseDates(
             var ind = 0
             sortKeys.forEachIndexed { index, str ->
                 if (index < sortKeys.lastIndex && DateUtil.isPastDate(str) && DateUtil.isDueDate(sortKeys[index + 1])) {
+                    courseDatesMap[CourseDateBlock.getTodayDateBlock().getSimpleDateTime()] = arrayListOf()
                     ind = index + 1
                 }
             }
